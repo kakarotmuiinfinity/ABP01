@@ -1,4 +1,2 @@
-pyrogram
-pyrofork
-pyrofork==2.3.45
-python-dotenv==1.0.0
+pyrogram==2.0.30  # Ensure the correct version of pyrogram is used
+python-dotenv==1.0.0  # Keep dotenv for loading environment variables
