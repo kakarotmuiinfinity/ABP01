@@ -1,6 +1,6 @@
 import os
 import asyncio
-from pyrofork import Client, filters
+from pyrogram import Client, filters
 from dotenv import load_dotenv
 
 # Load environment variables from .env
@@ -11,7 +11,7 @@ API_ID = int(os.getenv("API_ID"))
 API_HASH = os.getenv("API_HASH")
 BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
-# Create a Pyrofork Client (this is your bot)
+# Create a Pyrogram Client (this is your bot)
 app = Client("my_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
 # Start command handler
@@ -29,5 +29,5 @@ async def start(client, message):
     # Delete the sticker
     await client.delete_messages(message.chat.id, sticker_message.id)
 
-# Start the Pyrofork client
+# Start the Pyrogram client
 app.run()
