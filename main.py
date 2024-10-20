@@ -1,31 +1,37 @@
 import os
+import logging
 from telegram import Update
-from telegram.ext import CommandHandler, ApplicationBuilder
+from telegram.ext import Updater, CommandHandler, CallbackContext
+from dotenv import load_dotenv
 
-# Load environment variables
-BOT_TOKEN = os.getenv('BOT_TOKEN')
-PORT = int(os.getenv('PORT', 8080))  # Default to 8080 if not provided
-WEBHOOK_URL = os.getenv('WEBHOOK_URL')  # Webhook URL from environment variables
+# Load environment variables from .env file
+load_dotenv()
 
-async def start(update: Update, context):
-    """Handle the /start command with a 🔥 reaction."""
-    await update.message.reply_sticker("🔥")
+# Set up logging
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-def main():
-    # Create the bot application
-    application = ApplicationBuilder().token(BOT_TOKEN).build()
+# Command handler for /start
+def start(update: Update, context: CallbackContext) -> None:
+    # React with 🔥 emoji
+    context.bot.send_sticker(chat_id=update.effective_chat.id, sticker="🔥")
 
-    # Add handler for /start command
-    application.add_handler(CommandHandler('start', start))
+def main() -> None:
+    # Get environment variables
+    bot_token = os.getenv('BOT_TOKEN')
+    port = int(os.getenv('PORT', 8080))
 
-    # Start the bot with a webhook
-    application.run_webhook(
-        listen="0.0.0.0",
-        port=PORT,
-        url_path=BOT_TOKEN,
-        webhook_url=f"{WEBHOOK_URL}/{BOT_TOKEN}"
-    )
+    # Create the Updater and pass it your bot's token.
+    updater = Updater(token=bot_token)
+
+    # Register handlers
+    updater.dispatcher.add_handler(CommandHandler("start", start))
+
+    # Start the Bot
+    updater.start_webhook(listen='0.0.0.0', port=port, url_path=bot_token)
+    updater.bot.set_webhook(f'https://<your-koyeb-app-name>.koyeb.app/{bot_token}')
+
+    updater.idle()
 
 if __name__ == '__main__':
     main()
-    
