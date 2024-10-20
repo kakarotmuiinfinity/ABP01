@@ -1,5 +1,4 @@
 import os
-import asyncio
 from telegram import Update
 from telegram.ext import Application, CommandHandler
 
@@ -10,7 +9,7 @@ WEBHOOK_URL = os.getenv("WEBHOOK_URL")
 
 # Function to handle /start command
 async def start(update: Update, context):
-    # Send 🔥 emoji as a reaction to the /start command
+    # Reaction to the /start command
     await update.message.reply_text("🔥")
 
 # Initialize the application
@@ -24,18 +23,16 @@ async def set_webhook():
     await app.bot.set_webhook(url=WEBHOOK_URL)
 
 if __name__ == "__main__":
-    # Create an async context for setting the webhook and running the bot
-    async def main():
-        # Set webhook before starting the bot
-        await set_webhook()
-        
-        # Start the webhook
-        app.run_webhook(
-            listen="0.0.0.0",
-            port=PORT,
-            url_path=BOT_TOKEN
-        )
-
-    # Run the async main function
-    asyncio.run(main())
+    # Instead of using asyncio.run(), await the webhook setup and start the bot
+    app.initialize()  # Initialize the app without asyncio.run()
+    
+    # Now set the webhook directly
+    app.bot.loop.create_task(set_webhook())  # Use the current event loop to set webhook
+    
+    # Run the webhook, without trying to close or re-open the event loop
+    app.run_webhook(
+        listen="0.0.0.0",
+        port=PORT,
+        url_path=BOT_TOKEN
+    )
     
